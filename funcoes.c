@@ -1,15 +1,6 @@
 #include "struct_func.h"
 #include <stdio.h>
 
-/*struct Produto{
-    int codigo;
-    char nome[50];
-    int preco;
-    int estoque;
-
-    struct Produto *prox;
-};*/
-
 void Cadastrar_Produto(Produto **lista)
 {
     Produto *novo = (Produto*) malloc(sizeof(Produto)); 
@@ -27,13 +18,26 @@ void Cadastrar_Produto(Produto **lista)
     quando um produto entra no carrinho de um cliente?)*/
     scanf("%d", &novo->estoque);
     limpar_buffer();
+    novo->prox = *lista; 
+    *lista = novo;
+    printf("Produto cadastrado com sucesso!\n");//possivelmente adicionar verif de produto unico
 
-    
-    
+}
 
+// 2. LISTAR TODOS OS PRODUTOS
+void Listar_Produto(Produto *lista) 
+{
+    if (lista == NULL) 
+    {
+        printf("\nNenhum produto cadastrado.\n");
+        return;
+    }
 
-    
-
-
-
+    Produto *aux = lista;
+    printf("\n--- LISTA DE PRODUTOS ---\n");
+    while (aux != NULL) {
+        printf("Codigo: %d | Nome: %s | Preco: %d | Estoque: %d\n", 
+               aux->codigo, aux->nome, aux->preco, aux->estoque);
+        aux = aux->prox;
+    }
 }

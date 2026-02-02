@@ -8,7 +8,7 @@ typedef struct Produto Produto;
 struct Produto{
     int codigo;
     char nome[50];
-    int preco;
+    float preco;
     int estoque;
 
     Produto *prox;
