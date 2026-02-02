@@ -21,8 +21,8 @@ void Cadastrar_Produto (Produto **lista);
 void Listar_Produto (Produto *lista);
 //quero usar o resultado como conf de parm para
 //passar pra main(se o produto existe)
-void Menu_Editar_Produto (Produto *lista);
-void Menu_Apagar_Produto (Produto **lista);
+void Editar_Produto (Produto *lista);
+void Apagar_Produto (Produto **lista);
 Produto* Buscar_Produto (Produto *lista, int codigo);
 
 
@@ -30,7 +30,7 @@ Produto* Buscar_Produto (Produto *lista, int codigo);
 void Menu_Compra(Cliente *lista_clientes, Produto *lista_produtos);
 void Adicionar_ao_Carrinho(Cliente *cliente, Produto *lista_produtos); //localiza e adiciona o produto
 void Listar_Carrinho(Cliente *cliente); //percorre a lista do carrinho e soma o total
-void Remover_do_Carrinho(Cliente *cliente, int codigo); //remove 1 prdotuo
+void Remover_do_Carrinho(Cliente *cliente); //remove 1 prdotuo
 
 
 #endif

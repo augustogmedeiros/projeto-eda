@@ -145,6 +145,21 @@ void Editar_Produto(Produto *lista)
     int codigo;
     printf("Digite o código do Produto a ser editado: ");
     scanf("%d", &codigo);
+    Limpar_Buffer();
+
+    Produto *aux = lista;
+    while (aux != NULL && aux->codigo != codigo) 
+    {
+        aux = aux->prox;
+    }
+
+    if (aux == NULL) //nao encontrado
+    {
+        printf("Erro: Produto com codigo %d nao encontrado.\n", codigo);
+        return;
+    }
+
+
 }
 
 

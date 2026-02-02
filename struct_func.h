@@ -17,7 +17,7 @@ struct Produto{
 struct ItemCarrinho{
     Produto *Produto;
     int quantidade_compra;
-    ItemCarrinho *prox; //a
+    ItemCarrinho *prox; 
 };
 
 struct Cliente {
