@@ -13,7 +13,7 @@ void Editar_Produto (Produto *lista, int codigo);
 void Apagar_Produto (Produto **lista, int codigo);
 
 
-//funcoes de produto/carrinho
+//funcoes de produto/carrinhoo
 void Adicionar_ao_Carrinho(Cliente *cliente, Produto *lista_produtos); //localiza e adiciona o produto
 void Listar_Carrinho(Cliente *cliente); //percorre a lista do carrinho e soma o total
 void Remover_do_Carrinho(Cliente *cliente, int codigo); //remove 1 prdotuo
