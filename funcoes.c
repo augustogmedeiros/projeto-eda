@@ -27,6 +27,20 @@ void Check(void *ptr) //checa se a alocação deu certo
     }
 }
 
+void Menu_Inicial(int *n) {
+    printf("\n\n"); 
+    printf("==========================================\n");
+    printf("---------------MENU INICIAL---------------\n"); //alterar nome futuramente
+    printf("==========================================\n");
+    printf("  [1] Gerenciamento de Clientes\n");
+    printf("  [2] Gerenciamento de Produtos\n");
+    printf("  [3] Modo Compra (Carrinho)\n");
+    printf("  [0] Sair do Programa\n");
+    scanf("%d", n);
+    Limpar_Buffer();
+}
+
+
 void Edita_Nome(char *nome, int modo) 
 {
     //remove o \n do final do fgets
@@ -66,6 +80,21 @@ Produto* Buscar_Produto(Produto *lista, int codigo)
     return NULL;
 }
 
+// função auxiliar para o cliente, retorna o endereço de memoria ou NULL
+Cliente* Buscar_Cliente(Cliente *lista, char *cpf) {
+    Cliente *aux = lista; // ponteiro para o inicio da lista
+
+    // percorre a lista ate NULL (fim)
+    while (aux != NULL) {
+        // se o cpf for igual, retorna 0
+        if (strcmp(aux->cpf, cpf) == 0) {
+            return aux; // retorna o ponteiro para o cliente
+        }
+        aux = aux->prox;
+    }
+    return NULL; // nao encontrou cliente com o cpf cadastrado
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*--------------------------------------------LOGICAS--------------------------------------------*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,7 +115,8 @@ void Cadastrar_Produto(Produto **lista)
     Limpar_Buffer();
     Edita_Nome(novo->nome, 0); // padroniza nome
     printf("Digite o Preço do Produto: ");
-    scanf("%d", &novo->preco);
+    scanf("%f", &novo->preco);
+    Limpar_Buffer();
     printf("Digite o Estoque Disponível do Produto: "); /*(add futuramente funcao pra subtrair automaticamente do estoque
     quando um produto entra no carrinho de um cliente?)*/
     scanf("%d", &novo->estoque);
@@ -109,7 +139,7 @@ void Listar_Produto(Produto *lista)
     printf("\n--- LISTA DE PRODUTOS ---\n");
     while (aux != NULL) 
     {
-        printf("Codigo: %d | Nome: %s | Preco: %d | Estoque: %d\n", //formato
+        printf("Codigo: %d | Nome: %s | Preco: %.2f | Estoque: %d\n", //formato
         aux->codigo, aux->nome, aux->preco, aux->estoque);
         aux = aux->prox;
     }
@@ -168,13 +198,13 @@ void Editar_Produto(Produto *lista)
         return;
     }
 
-    printf("\nProduto encontrado: %s Preco atual: %d\n", aux->nome, aux->preco); //nao alterar codigo
+    printf("\nProduto encontrado: %s Preco atual: %.2f\n", aux->nome, aux->preco); //nao alterar codigo
     printf("Digite o Novo Nome: ");
-    scanf("%49[^\n]", aux->nome); 
+    scanf(" %49[^\n]", aux->nome); 
     Limpar_Buffer();
     Edita_Nome(aux->nome, 0); //padroniza novamente  
     printf("Digite o Novo Preco: ");
-    scanf("%d", &aux->preco);
+    scanf("%f", &aux->preco);
     printf("Digite o Novo Estoque: ");
     scanf("%d", &aux->estoque);
     Limpar_Buffer();
@@ -182,53 +212,140 @@ void Editar_Produto(Produto *lista)
     printf("Produto atualizado com sucesso!\n");
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/*--------------------------------------------CLIENTE--------------------------------------------*/
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void Cadastrar_Cliente(Cliente **lista) {
+    printf("--- CADASTRO DE CLIENTE --- \n");
+
+    char cpf_temp[15]; // verifica se o cpf ja foi cadastrado
+    printf("Digite o CPF: ");
+    scanf(" %[^\n]", cpf_temp);
+
+    if (Buscar_Cliente(*lista, cpf_temp) != NULL) {
+        printf("[ERRO] Este CPF ja esta cadastrado [ERRO] \n");
+        return;
+    }
+    Cliente *novo = (Cliente*) malloc(sizeof(Cliente));
+    Check(novo); // verifica o malloc
+
+    // copia o cpf para a struct
+    strcpy(novo->cpf, cpf_temp);
+
+    // leitura dos dados
+    printf("Nome Completo: ");
+    scanf(" %[^\n]", novo->nome);
+    Edita_Nome(novo->nome, 0); // formata o nome
+    Limpar_Buffer();
+
+    printf("Email: ");
+    scanf(" %[^\n]", novo->email);
+    Edita_Nome(novo->email, 1); // formata o email
+    Limpar_Buffer();
+
+    printf("Telefone: ");
+    scanf(" %[^\n]", novo->telefone);
+    Limpar_Buffer();
+
+    printf("Data de Nascimento (DD/MM/AAAA): \n");
+    scanf(" %[^\n]", novo->data_nascimento);
+    Limpar_Buffer();
+
+    novo->Carrinho = NULL; // carrinho do cliente começa vazio
+    novo->prox = *lista; // O novo aponta para o antigo primeiro
+    *lista = novo;       // O ponteiro principal agora aponta para o novo
+    printf("Cliente cadastrado!\n");
+}
 
 
+void Listar_Clientes(Cliente *lista) {
+    if (lista == NULL) {
+        printf("\n[ERRO] Nenhum cliente cadastrado [ERRO]\n");
+        return;
+    }
 
+    printf("\n--- LISTA DE CLIENTES --- \n");
+    Cliente *aux = lista;
+    
+    while (aux != NULL) {
+        printf("CPF: %-14s | Nome: %-20s | Email: %s\n", 
+               aux->cpf, aux->nome, aux->email);
+        printf("   Tel: %-14s | Nasc: %s\n", 
+               aux->telefone, aux->data_nascimento);
+        printf("----------------------------------------------------\n");
+        
+        aux = aux->prox;
+    }
+}
 
+void Editar_Cliente(Cliente *lista) {
+    char cpf[15];
+    printf("\n--- EDITAR CLIENTE --- \n");
+    printf("Digite o CPF do cliente que deseja editar: ");
+    scanf(" %[^\n]", cpf);
 
+    Cliente *encontrado = Buscar_Cliente(lista, cpf);
 
+    if (encontrado == NULL) {
+        printf("[ERRO] Cliente nao encontrado [ERRO]\n");
+        return;
+    }
 
+    // se encontrar, edita os dados diretamente no ponteiro
+    printf("Cliente Encontrado: %s\n", encontrado->nome);
+    printf("Digite os novos dados \n");
 
+    printf("Novo Nome: ");
+    scanf(" %[^\n]", encontrado->nome);
+    Edita_Nome(encontrado->nome, 0);
 
+    printf("Novo Email: ");
+    scanf(" %[^\n]", encontrado->email);
+    Edita_Nome(encontrado->email, 1);
 
+    printf("Novo Telefone: ");
+    scanf(" %[^\n]", encontrado->telefone);
 
+    printf("Dados atualizados!\n");
+}
 
+void Apagar_Cliente(Cliente **lista) {
+    char cpf[15];
+    printf("\n--- APAGAR CLIENTE ---\n");
+    printf("Digite o CPF do cliente a ser excluido: ");
+    scanf(" %[^\n]", cpf);
 
+    if (*lista == NULL) {
+        printf("[ERRO] Lista vazia [ERRO]\n");
+        return;
+    }
+    Cliente *anterior = NULL;
+    Cliente *atual = *lista;
 
+    // loop para encontrar o nó e manter o ponteiro para o anterior
+    while (atual != NULL && strcmp(atual->cpf, cpf) != 0) {
+        anterior = atual;
+        atual = atual->prox;
+    }
 
+    // se o loop percorrer tudo e não encontrar (NULL)
+    if (atual == NULL) {
+        printf("[ERRO] Cliente nao encontrado [ERRO]\n");
+        return;
+    }
 
+    // se o cliente apagado for o primeiro da lista
+    if (anterior == NULL) {
+        *lista = atual->prox; // passa o inicio da lista para o segundo elemento
+    } 
+    // se o cliente apagado nao for o primeiro da lista
+    else {
+        anterior->prox = atual->prox; // o anterior pula o apagado e aponta para o proximo da lista
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    free(atual);
+    printf("Cliente removido permanentemente.\n");
+}
 
 
 /*void Libera_Lista(Produto **lista)      //NAO PRECISA??//
@@ -246,9 +363,3 @@ void Editar_Produto(Produto *lista)
     
     printf("Lista apagada e memória liberada com sucesso! \n");
 }*/
-
-
-
-
-
-
