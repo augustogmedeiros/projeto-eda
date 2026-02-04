@@ -25,10 +25,9 @@ Produto* Buscar_Produto (Produto *lista, int codigo);
 
 
 //funcoes de produto/carrinhoo
-void Menu_Compra(Cliente *lista_clientes, Produto *lista_produtos);
-void Adicionar_ao_Carrinho(Cliente *cliente, Produto *lista_produtos); //localiza e adiciona o produto
+void Menu_Compra(Cliente *lista_clientes, Produto *lista_p);
+void Adicionar_ao_Carrinho(Cliente *cliente, Produto *lista_p); //localiza e adiciona o produto
 void Listar_Carrinho(Cliente *cliente); //percorre a lista do carrinho e soma o total
-void Remover_do_Carrinho(Cliente *cliente); //remove 1 prdotuo
-
+void Remover_do_Carrinho(Cliente *lista_c,Produto *lista_p ); //remove 1 prdotuo
 
 #endif
