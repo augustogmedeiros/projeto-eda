@@ -41,7 +41,6 @@ void Menu_Inicial(int *n)
 
 void Edita_Nome(char *nome, int modo) 
 {
-    //remove o \n do final do fgets
     size_t tam = strlen(nome);
     // strlen retorna unsigned, por isso utilizamos unsigned int no for ( evitar o warning)
     for(unsigned int i = 0; i < tam; i++) 
@@ -305,7 +304,7 @@ void Listar_Clientes(Cliente *lista)
     {
         printf(" CPF: %-14s | Nome: %-20s | Email: %s\n", //flag -%xx alinha as colunas
                aux->cpf, aux->nome, aux->email);
-        printf(" Tel: %-14s | Nasc: %.2s/%.2s/%.4s\n", 
+        printf(" Tel: %-14s | Nasc: %s\n", 
                aux->telefone, aux->data_nascimento);
         printf(" ==========================================\n");
         
