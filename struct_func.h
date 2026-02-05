@@ -30,10 +30,7 @@ struct Cliente
     char    telefone[20];
     char    data_nascimento[12];
 
-    Produto *Carrinho; 
+    ItemCarrinho *Carrinho; // usei o ponteiro errado aq
     Cliente *prox;
-
-
-
 };
 #endif

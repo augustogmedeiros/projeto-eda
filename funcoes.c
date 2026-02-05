@@ -4,9 +4,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-/*printf("--- xxxxxxxxxxxxxxxxxxxxxxxxxxxxx --- \n");*/
-/*printf("[ERRO] xxxxxxxxxxxxxxxxxxxxxxxxx [ERRO]\n", codigo);*/
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*-------------------------------------------AUXILIARES------------------------------------------*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,7 +19,7 @@ void Limpar_Buffer() //limpa o buffer do teclado
 void Check(void *ptr) //checa se a alocação deu certo
 {
     if (ptr == NULL) 
-    {     printf("\n[ERRO] Falha na alocacao de memória [ERRO]\n"); exit(1);    }
+    {     printf("\n[ERRO] Falha na alocacao de memoria [ERRO]\n"); exit(1);    }
 }
 
 
@@ -98,9 +95,8 @@ Cliente* Buscar_Cliente(Cliente *lista, char *cpf)
     return NULL; // nao encontrou cliente com o cpf cadastrado
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/*--------------------------------------------LOGICAS--------------------------------------------*/
+/*--------------------------------------CLIENTE/PRODUTOS-----------------------------------------*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -110,7 +106,7 @@ void Cadastrar_Produto(Produto **lista)
     Produto *novo = (Produto*) malloc(sizeof(Produto)); 
     Check(novo);//checa se a memoria foi alocada
 
-    printf("Digite o Código do Produto: ");
+    printf("Digite o Codigo do Produto: ");
     scanf("%d", &novo->codigo);
     Limpar_Buffer();
 
@@ -119,19 +115,18 @@ void Cadastrar_Produto(Produto **lista)
     Limpar_Buffer();
 
     Edita_Nome(novo->nome, 0); // padroniza nome
-    printf("Digite o Preço do Produto: ");
-    scanf("%f", &novo->preco);
+    printf("Digite o Preco do Produto: ");
+    scanf("%f", &novo->preco); 
     Limpar_Buffer();
 
-    printf("Digite o Estoque Disponível do Produto: "); /*(add futuramente funcao pra subtrair automaticamente do estoque
-    quando um produto entra no carrinho de um cliente?)*/
+    printf("Digite o Estoque Disponivel do Produto: "); 
     scanf("%d", &novo->estoque);
     Limpar_Buffer();
 
-    novo->prox = *lista; 
+    novo->prox = *lista; //-> acessa o campo de uma struct atraves de um ponteiro 
     *lista = novo;
 
-    printf("Produto cadastrado com sucesso!\n");//possivelmente adicionar verif de produto unico
+    printf("Produto cadastrado com sucesso\n");
 }
 
 
@@ -183,7 +178,7 @@ void Apagar_Produto(Produto **lista)
     }
     free(atual);//solta a memoria
     
-    printf("Produto removido com sucesso! \n");
+    printf("Produto removido com sucesso \n");
 }
 
 
@@ -191,13 +186,14 @@ void Editar_Produto(Produto *lista)
 {
     printf("===== ATUALIZACAO DE PRODUTO ===== \n");
     int codigo;
-    printf("Digite o código do Produto a ser editado: ");
+    printf("Digite o codigo do Produto a ser editado: ");
     scanf("%d", &codigo);
     Limpar_Buffer();
+
     Produto *aux = Buscar_Produto(lista, codigo);
 
     if (aux == NULL) //nao encontrado
-    {    printf("[ERRO] Produto com código %d nao encontrado [ERRO]\n", codigo); return;    }
+    {    printf("[ERRO] Produto com codigo %d nao encontrado [ERRO]\n", codigo); return;    }
         
     printf("\nProduto encontrado: %s Preco atual: %.2f\n", aux->nome, aux->preco); //nao alterar codigo
     printf("Digite o Novo Nome: ");
@@ -206,19 +202,14 @@ void Editar_Produto(Produto *lista)
 
     Edita_Nome(aux->nome, 0); //padroniza novamente  
     printf("Digite o Novo Preco: ");
-    scanf("%f", &aux->preco);
+    scanf("%f", &aux->preco); //acessa o endereço de preço e guarda o valor digitado la
 
     printf("Digite o Novo Estoque: ");
     scanf("%d", &aux->estoque);
     Limpar_Buffer();
 
-    printf("Produto atualizado com sucesso!\n");
+    printf("Produto atualizado com sucesso\n");
 }
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/*--------------------------------------CLIENTE/PRODUTOS-----------------------------------------*/
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void Cadastrar_Cliente(Cliente **lista) 
@@ -258,7 +249,8 @@ void Cadastrar_Cliente(Cliente **lista)
         scanf(" %[^\n]", novo->nome);
         Limpar_Buffer();
 
-        for(i = 0; i < strlen(novo->nome); i++) {
+        for(i = 0; i < strlen(novo->nome); i++) //nao permite numero nem caracter especial
+        {
             // 
             if(!isalpha(novo->nome[i]) && !isspace(novo->nome[i])) { //nome tem que ter apenas letras ou espaço
                 valido = 0;
@@ -288,28 +280,26 @@ void Cadastrar_Cliente(Cliente **lista)
         }
     } while(valido == 0);
 
-    printf("Data de Nascimento (DD/MM/AAAA): ");
+    printf("Data de Nascimento (DDMMAAAA): ");
     scanf(" %[^\n]", novo->data_nascimento);
     Limpar_Buffer(); 
 
     novo->Carrinho = NULL; // carrinho do cliente começa vazio
-    novo->prox = *lista; // O novo aponta para o antigo primeiro
-    *lista = novo;       // O ponteiro principal agora aponta para o novo
+    novo->prox = *lista; // primeiro nó vira o segundo
+    *lista = novo;       // novo nó se torna o primeiro nó
     printf("Cliente cadastrado\n");
 }
 
 void Listar_Clientes(Cliente *lista) 
 {
-    if (lista == NULL) {
-        printf("\n[ERRO] Nenhum cliente cadastrado [ERRO]\n"); return;   }
-        
-    
+    if (lista == NULL) {    printf("\n[ERRO] Nenhum cliente cadastrado [ERRO]\n"); return;   }
 
     printf("\n===== LISTA DE CLIENTES ===== \n");
     Cliente *aux = lista;
     
-    while (aux != NULL) {
-        printf("CPF: %-14s | Nome: %-20s | Email: %s\n", 
+    while (aux != NULL) 
+    {
+        printf("CPF: %-14s | Nome: %-20s | Email: %s\n", //flag -%xx alinha as colunas
                aux->cpf, aux->nome, aux->email);
         printf("   Tel: %-14s | Nasc: %s\n", 
                aux->telefone, aux->data_nascimento);
@@ -325,7 +315,7 @@ void Editar_Cliente(Cliente *lista)
     char cpf[15];
     int valido; // variavel de controle
     unsigned int i; // contador
-
+    //unsigned usado pra evitar warning de strng.h
     printf("\n===== EDITAR CLIENTE ===== \n");
     printf("Digite o CPF do cliente que deseja editar: ");
     scanf(" %[^\n]", cpf);
@@ -344,13 +334,14 @@ void Editar_Cliente(Cliente *lista)
         scanf(" %[^\n]", encontrado->nome);
         Limpar_Buffer();
 
-        for(i = 0; i < strlen(encontrado->nome); i++) {
-            if(!isalpha(encontrado->nome[i]) && !isspace(encontrado->nome[i])) {
+        for(i = 0; i < strlen(encontrado->nome); i++) 
+        {
+            if(!isalpha(encontrado->nome[i]) && !isspace(encontrado->nome[i])) 
+            {
                 valido = 0;
                 break;
             }
         }
-        
         if(!valido) printf("[ERRO] Nome invalido [ERRO]\n");
     } while(valido == 0);
 
@@ -373,7 +364,7 @@ void Editar_Cliente(Cliente *lista)
         }
     } while(valido == 0);
 
-    printf("Dados atualizados!\n");
+    printf("Dados atualizados\n");
 }
 
 void Apagar_Cliente(Cliente **lista) 
@@ -389,7 +380,7 @@ void Apagar_Cliente(Cliente **lista)
     Cliente *atual = *lista;
 
     // loop para encontrar o nó e manter o ponteiro para o anterior
-    while (atual != NULL && strcmp(atual->cpf, cpf) != 0) 
+    while (atual != NULL && strcmp(atual->cpf, cpf) != 0) //compara string de cpf com as armazenadas na lista
     {
         anterior = atual;
         atual = atual->prox;
@@ -398,10 +389,13 @@ void Apagar_Cliente(Cliente **lista)
     // se o loop percorrer tudo e não encontrar (NULL)
     if (atual == NULL) {    printf("[ERRO] Cliente nao encontrado [ERRO]\n"); return;   }
 
-    Produto *p_temp = atual->Carrinho;//apagando carrinho antes de apagar cliente p evitar lixo d emmoria
-    Produto *p_prox;
-    while(p_temp != NULL) {
+    ItemCarrinho *p_temp = atual->Carrinho; //apagando carrinho antes de apagar cliente p evitar lixo d emmoria
+    ItemCarrinho *p_prox;
+
+    while(p_temp != NULL) 
+    {
         p_prox = p_temp->prox;
+        p_temp->Produto->estoque += p_temp->quantidade_compra;
         free(p_temp);
         p_temp = p_prox;
     }
@@ -412,7 +406,6 @@ void Apagar_Cliente(Cliente **lista)
 
     else {   anterior->prox = atual->prox;   } 
     // o anterior pula o apagado e aponta para o proximo da lista    
-    
 
     free(atual);
     printf("Cliente removido permanentemente.\n");
@@ -432,13 +425,13 @@ void Adicionar_ao_Carrinho(Cliente *lista_c, Produto *lista_p )
     printf("Digite o CPF do cliente: ");
     scanf(" %14[^\n]", cpf);
     Cliente *c = Buscar_Cliente(lista_c, cpf);  //checa se cliente existe 
-    if (c == NULL)  {   printf("[ERRO] Cliente não encontrado [ERRO]\n"); return; }
+    if (c == NULL)  {   printf("[ERRO] Cliente nao encontrado [ERRO]\n"); return; }
 
-    printf("Digite o código do produto :");
+    printf("Digite o codigo do produto :");
     scanf("%d", &codigo);
 
     Produto *p = Buscar_Produto(lista_p, codigo);  //checa se produto existe 
-    if (p == NULL)   {   printf("[ERRO] Produto não encontrado [ERRO]\n"); return;   }
+    if (p == NULL)   {   printf("[ERRO] Produto nao encontrado [ERRO]\n"); return;   }
     
         
     printf("Digite a quantidade desejada :");
@@ -447,26 +440,24 @@ void Adicionar_ao_Carrinho(Cliente *lista_c, Produto *lista_p )
     if(qtd > p->estoque)
     {
         printf("[ERRO] Estoque insuficiente [ERRO]\n"); 
-        printf("Quantidade Disponível: %d\n", p->estoque); 
+        printf("Quantidade Disponivel: %d\n", p->estoque); 
         return;
     }
     if(qtd <= 0) {    printf("[ERRO] Quantidade invalida [ERRO]\n"); return;    }
 
-    Produto *novo_item = (Produto*) malloc(sizeof(Produto));//aloca
+    ItemCarrinho *novo_item = (ItemCarrinho*) malloc(sizeof(ItemCarrinho));//aloca
     Check(novo_item);//checa alocacao
 
-    novo_item->codigo = p->codigo;
-    strcpy(novo_item->nome, p->nome); 
-    novo_item->preco = p->preco;
-    novo_item->estoque = qtd;
-    // Copia do estoque para o carrinho designado
+    novo_item->Produto = p;             // itemcarrinho-> item original
+    novo_item->quantidade_compra = qtd; // Guarda qtd
 
-    novo_item->prox = c->Carrinho;//coloca no crrinho
+    novo_item->prox = c->Carrinho;
     c->Carrinho = novo_item;
+    // Copia do estoque para o carrinho designado
 
     p->estoque -= qtd;//atualiza estoque
 
-    printf("%s adicionado ao carrinho!\n", p->nome);
+    printf("%s adicionado ao carrinho\n", p->nome);
 }
 
 
@@ -477,7 +468,7 @@ void Listar_Carrinho(Cliente *lista_c)//checa se cliente existe/carrinho esta va
     char cpf[15];
     float valor_total = 0;
     int total_itens = 0;
-    Produto *aux;
+    ItemCarrinho *aux;
     
     
     printf("\n===== CARRINHO: =====\n");
@@ -487,28 +478,26 @@ void Listar_Carrinho(Cliente *lista_c)//checa se cliente existe/carrinho esta va
 
     c = Buscar_Cliente(lista_c, cpf);
     if (c == NULL)
-    {   printf("[ERRO] Cliente não encontrado [ERRO]\n");    }
+    {   printf("[ERRO] Cliente nao encontrado [ERRO]\n");    }
     
     else
     {
         aux = c->Carrinho;//atribuindo ao carrinho certo
-        if (c->Carrinho == NULL) 
-        {   printf("Seu carrinho está vazio!\n");     }
+        if (c->Carrinho == NULL) {   printf("carrinho vazio\n");     }
         else 
         {
-            printf("\n===== CARRINHO DE COMPRAS: =====");  
+            printf("===== CARRINHO DE COMPRAS: =====\n");  
         }
 
         while (aux != NULL) 
         {
-            float subtotal = aux->preco * aux->estoque;
+            float subtotal = aux->Produto->preco * aux->quantidade_compra;
 
-            printf("Cód: %-4d | Produto: %-15s | Qtd: %-3d | Preço Un: %.2f | Subtotal: %.2f\n",
-                   aux->codigo, aux->nome, aux->estoque, aux->preco, subtotal);
-
-            valor_total += subtotal;
-            total_itens += aux->estoque;
-            aux = aux->prox; 
+            printf("Cod: %-4d | Produto: %-15s | Qtd: %-3d | Preco Un: %.2f | Subtotal: %.2f\n",
+                    aux->Produto->codigo, aux->Produto->nome, aux->quantidade_compra, aux->Produto->preco, subtotal);
+                valor_total += subtotal;
+                total_itens += aux->quantidade_compra;
+                aux = aux->prox;
         }
 
         printf("==========================================\n");
@@ -526,46 +515,41 @@ void Remover_do_Carrinho(Cliente *lista_c, Produto *lista_p) //passar oq esta no
     Cliente *c;
 
     printf("===== REMOVER ITEM DO CARRINHO =====\n");
-    printf("Digite o CPF do cliente: ");
+    printf("Digite o CPF do cliente: \n");
     scanf(" %14[^\n]", cpf);
 
     c = Buscar_Cliente(lista_c, cpf);
-    if (c == NULL)  {   printf("[ERRO] Cliente não encontrado [ERRO]\n"); return;   }
+    if (c == NULL)  {   printf("[ERRO] Cliente nao encontrado [ERRO]\n"); return;   }
     
 
-    if (c->Carrinho == NULL)     { printf("Seu carrinho está vazio!\n"); return; }
+    if (c->Carrinho == NULL)     { printf("carrinho vazio\n"); return; }
 
-    printf("Digite o código do produto que deseja remover: ");
+    printf("Digite o codigo do produto que deseja remover: ");
     scanf("%d", &codigo_busca);
     Limpar_Buffer();
 
-    Produto *anterior = NULL;
-    Produto *atual = c->Carrinho; 
-    while (atual != NULL && atual->codigo != codigo_busca) //procura o produto pela lista
+    ItemCarrinho *anterior = NULL;
+    ItemCarrinho *atual = c->Carrinho; 
+    while (atual != NULL && atual->Produto->codigo != codigo_busca) //procura o produto por codigo pela lista
     {
         anterior = atual;
         atual = atual->prox;
     }
 
     if (atual == NULL) //nao encontrado
-    {   printf("[ERRO] O Produto com código %d não está no carrinho [ERRO]\n", codigo_busca); return;  }
+    {   printf("[ERRO] O Produto com codigo %d não esta no carrinho [ERRO]\n", codigo_busca); return;  }
           
-    Produto *p_estoque = Buscar_Produto(lista_p, codigo_busca);
-    if (p_estoque != NULL) //se encontrado, checa se o produto ainda existe
-    {
-        p_estoque->estoque += atual->estoque; // Devolve a quantidade escolhida
-    }
+    atual->Produto->estoque += atual->quantidade_compra;
 
-    if (anterior == NULL) 
+    if (anterior == NULL) //primeiro item
     {
-        c->Carrinho = atual->prox;//primeiro da lista
-    } 
-    else 
+        c->Carrinho = atual->prox;
+    } else 
     {
-        anterior->prox = atual->prox;//meio ou fim
+        anterior->prox = atual->prox;//meio ou fim da lista
     }
 
     free(atual);
 
-    printf("Item %d removido do carrinho!\n", codigo_busca);
+    printf("Item %d removido do carrinho\n", codigo_busca);
 }   
